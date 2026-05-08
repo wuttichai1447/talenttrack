@@ -19,6 +19,22 @@ const previewSchema = z.object({
 //   - FormData with `file` (PDF) + `jobId`    → extract + preview
 //   - JSON { jobId, resumeText, candidate: { name,email,... } } → screen + create candidate
 export async function POST(req: NextRequest) {
+  try {
+    return await handle(req);
+  } catch (err) {
+    // Anything not caught downstream lands here — without this, Next.js returns
+    // a body-less 500 and the HR user sees a console error with zero context.
+    const message = err instanceof Error ? err.message : "Unknown error";
+    const stack = err instanceof Error ? err.stack : undefined;
+    console.error("[/api/screen] uncaught:", message, stack);
+    return NextResponse.json(
+      { error: `Screening failed: ${message}` },
+      { status: 500 },
+    );
+  }
+}
+
+async function handle(req: NextRequest) {
   const contentType = req.headers.get("content-type") ?? "";
 
   let resumeText = "";
@@ -36,7 +52,18 @@ export async function POST(req: NextRequest) {
     if (file && file instanceof File) {
       resumeFile = file.name;
       const ab = await file.arrayBuffer();
-      resumeText = await extractPdfText(ab);
+      try {
+        resumeText = await extractPdfText(ab);
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : "Unknown PDF error";
+        console.error("[/api/screen] PDF parse failed:", msg);
+        return NextResponse.json(
+          {
+            error: `Could not read this PDF (${msg}). Try the "Paste text" tab instead, or re-export the CV.`,
+          },
+          { status: 400 },
+        );
+      }
     } else if (pasted) {
       resumeText = pasted;
     }
