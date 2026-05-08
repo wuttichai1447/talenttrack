@@ -234,6 +234,37 @@ First version blocked saving on any conflict. Then I realized: HR sometimes *int
 ### Score colour threshold consistency
 Initially each score visualization picked its own thresholds (one used 8/5, another 7/4). I extracted the rule into `ScoreBar` and reuse the same `>=7.5 / >=5 / else` triplet *everywhere*: Kanban card, list, detail page, dashboard buckets. Looks like one product instead of five disconnected views.
 
+### PDF parsing on Vercel — the worker that wasn't
+Local dev (Windows + Node 20) parsed PDFs fine via `pdfjs-dist/legacy/build/pdf.mjs` after setting `GlobalWorkerOptions.workerSrc = ""`. First production deploy: every PDF upload returned
+
+```
+Could not read this PDF (Setting up fake worker failed:
+"No 'GlobalWorkerOptions.workerSrc' specified.")
+```
+
+Reason: pdfjs-dist insists on spinning up a Web Worker even in Node, and on Vercel's serverless runtime the "fake worker" fallback rejects the empty string. There's a long thread on it; the workarounds (shimming `workerSrc`, copying the worker file into `public/`, bundling it with Webpack) are all brittle and add bundle size.
+
+I swapped to **`unpdf`** (Nuxt team's serverless-first PDF wrapper). Same pdfjs engine, no worker boot at all, ships pre-built for serverless. The whole `src/lib/pdf.ts` collapsed from ~50 lines of pdfjs ceremony to:
+
+```ts
+const pdf = await getDocumentProxy(data);
+const { text } = await extractText(pdf, { mergePages: true });
+return text;
+```
+
+Bundle dropped 4 MB → 600 KB. Production PDF upload works first try.
+
+**Lesson**: when a library forces you to disable a feature with a hack, that's a smell. Find the library that doesn't need the feature in the first place.
+
+### Errors with empty bodies — never again
+A separate symptom of the PDF bug: `/api/screen` returned a 500 with `Content-Length: 0`. Every layer above it (browser DevTools, the toast handler) just saw "Failed to load resource" with no diagnostic value.
+
+Root fix is above. Defence-in-depth fix: the route handler is now wrapped in a top-level try/catch that:
+- `console.error`s the full stack (visible in Vercel runtime logs)
+- Returns `{ error: <message> }` so the client toast can show something useful
+
+Plus PDF extraction specifically returns 400 with a friendly "try Paste text instead" message. **A 500 with no body in production is a bug in the error handling, not just a bug in the code.**
+
 ### Google Calendar integration — pick the boring solution
 First pass generated a `https://meet.google.com/<random>-<random>-<random>` URL and stored it as `meetLink`. **It looks legitimate but the link doesn't resolve** — a reviewer clicking "Join Meet" gets a 404.
 
