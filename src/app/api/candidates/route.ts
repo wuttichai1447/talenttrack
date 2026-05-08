@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { STAGE_IDS } from "@/lib/stages";
+import { revalidatePipeline } from "@/lib/revalidate";
 
 const createSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -71,6 +72,8 @@ export async function POST(req: NextRequest) {
     },
     include: { job: { select: { id: true, title: true } } },
   });
+
+  revalidatePipeline();
 
   return NextResponse.json(created, { status: 201 });
 }

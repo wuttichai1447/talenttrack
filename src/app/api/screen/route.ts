@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { CLAUDE_MODEL } from "@/lib/anthropic";
 import { extractPdfText } from "@/lib/pdf";
 import { overallScore, screenResume } from "@/lib/screen-resume";
+import { revalidatePipeline } from "@/lib/revalidate";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -122,6 +123,8 @@ export async function POST(req: NextRequest) {
         screenings: { orderBy: { createdAt: "desc" }, take: 1 },
       },
     });
+
+    revalidatePipeline();
 
     return NextResponse.json({
       candidate: created,

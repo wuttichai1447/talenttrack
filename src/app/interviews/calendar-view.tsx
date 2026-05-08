@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+import { cn, DISPLAY_TZ } from "@/lib/utils";
 import type { InterviewWithCandidate } from "./types";
 
 interface Props {
@@ -44,7 +44,11 @@ export function CalendarView({ interviews, onSelect }: Props) {
     });
   }
 
-  const monthLabel = cursor.toLocaleString("en-US", { month: "long", year: "numeric" });
+  const monthLabel = cursor.toLocaleString("en-US", {
+    month: "long",
+    year: "numeric",
+    timeZone: DISPLAY_TZ,
+  });
   const today = new Date();
   const isToday = (d: Date) =>
     d.getFullYear() === today.getFullYear() &&
@@ -128,9 +132,13 @@ export function CalendarView({ interviews, onSelect }: Props) {
                           ? "bg-red-100 text-red-800 line-through"
                           : "bg-blue-100 text-blue-800 hover:bg-blue-200",
                       )}
-                      title={`${e.candidate.name} — ${new Date(e.scheduledAt).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}`}
+                      title={`${e.candidate.name} — ${new Date(e.scheduledAt).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", timeZone: DISPLAY_TZ })}`}
                     >
-                      {new Date(e.scheduledAt).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}{" "}
+                      {new Date(e.scheduledAt).toLocaleTimeString("en-US", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        timeZone: DISPLAY_TZ,
+                      })}{" "}
                       {e.candidate.name}
                     </button>
                   ))}

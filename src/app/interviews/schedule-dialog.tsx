@@ -22,7 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { safeJSON } from "@/lib/utils";
+import { safeJSON, DISPLAY_TZ } from "@/lib/utils";
 import type { CandidateOption, InterviewWithCandidate } from "./types";
 
 interface Props {
@@ -271,6 +271,7 @@ export function ScheduleDialog({
                       day: "numeric",
                       hour: "2-digit",
                       minute: "2-digit",
+                      timeZone: DISPLAY_TZ,
                     })}{" "}
                     ({c.durationMin} min)
                   </li>

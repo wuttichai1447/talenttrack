@@ -5,10 +5,23 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+/**
+ * Display timezone for all candidate / interview times.
+ * Pinned to Asia/Bangkok so server-rendered (Vercel UTC) and client-rendered
+ * times agree — otherwise an interview saved at 17:00 ICT would appear as
+ * 10:00 in Server Components and 17:00 in Client Components.
+ */
+export const DISPLAY_TZ = "Asia/Bangkok";
+
 export function formatDate(date: Date | string, format: "short" | "long" | "datetime" = "short") {
   const d = typeof date === "string" ? new Date(date) : date;
   if (format === "long") {
-    return d.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+    return d.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      timeZone: DISPLAY_TZ,
+    });
   }
   if (format === "datetime") {
     return d.toLocaleString("en-US", {
@@ -17,9 +30,15 @@ export function formatDate(date: Date | string, format: "short" | "long" | "date
       day: "numeric",
       hour: "2-digit",
       minute: "2-digit",
+      timeZone: DISPLAY_TZ,
     });
   }
-  return d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+  return d.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    timeZone: DISPLAY_TZ,
+  });
 }
 
 export function timeAgo(date: Date | string) {

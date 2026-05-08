@@ -14,7 +14,7 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { cn, formatDate, safeJSON } from "@/lib/utils";
+import { cn, formatDate, safeJSON, DISPLAY_TZ } from "@/lib/utils";
 import { buildGoogleCalendarUrl } from "@/lib/interview";
 import type { InterviewWithCandidate } from "./types";
 
@@ -81,11 +81,17 @@ export function InterviewList({ interviews, onEdit, onCancel, compact }: Props) 
                 <div className="flex gap-4 min-w-0">
                   <div className="flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-md bg-primary/10 text-primary">
                     <span className="text-[10px] uppercase font-semibold">
-                      {start.toLocaleString("en-US", { month: "short" })}
+                      {start.toLocaleString("en-US", { month: "short", timeZone: DISPLAY_TZ })}
                     </span>
-                    <span className="text-xl font-bold leading-none">{start.getDate()}</span>
+                    <span className="text-xl font-bold leading-none">
+                      {start.toLocaleString("en-US", { day: "numeric", timeZone: DISPLAY_TZ })}
+                    </span>
                     <span className="text-[10px] tabular-nums">
-                      {start.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}
+                      {start.toLocaleTimeString("en-US", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        timeZone: DISPLAY_TZ,
+                      })}
                     </span>
                   </div>
                   <div className="min-w-0 flex-1">

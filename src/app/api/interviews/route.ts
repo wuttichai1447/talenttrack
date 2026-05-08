@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { findConflicts, generateMeetLink } from "@/lib/interview";
+import { revalidatePipeline } from "@/lib/revalidate";
 import { interviewWithCandidateInclude } from "./shape";
 
 const createSchema = z.object({
@@ -136,6 +137,8 @@ export async function POST(req: NextRequest) {
       },
     });
   }
+
+  revalidatePipeline();
 
   return NextResponse.json(interview, { status: 201 });
 }
