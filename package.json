@@ -5,7 +5,7 @@
   "description": "Mini Recruiting Pipeline Tool — AI-powered ATS for HR teams",
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "prisma generate && prisma db push --skip-generate --accept-data-loss && next build",
+    "build": "prisma generate && node scripts/db-sync.mjs && next build",
     "start": "next start",
     "lint": "next lint",
     "db:push": "prisma db push",
