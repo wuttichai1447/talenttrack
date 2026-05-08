@@ -1,0 +1,54 @@
+{
+  "skillsScore": 9.5,
+  "experienceScore": 9,
+  "cultureScore": 8.5,
+  "skillsReasoning": "Jane's stack is an almost exact match: TypeScript, Next.js 14, Node.js, PostgreSQL with Prisma, and Vercel/AWS are all explicitly listed in the JD's must-haves. She also covers both nice-to-haves — OpenAI integration (2022, early adopter) and cloud deployment (AWS + Vercel) — and her open-source Prisma plugins (~600 GitHub stars combined) demonstrate depth beyond day-to-day work.",
+  "experienceReasoning": "Jane has 5 years of cumulative full-stack production experience (TechCorp 3 yrs + Startup 2 yrs), clearing the 3-year minimum with room to spare. At TechCorp she owned a high-stakes Rails-to-Next.js migration serving 80k DAU and designed schemas for orders and billing — two of the most complexity-heavy domains in any product. At the Startup she built an MVP from zero to 10k MAU, demonstrating end-to-end ownership at an early stage.",
+  "cultureReasoning": "Mentoring 3 junior engineers and running weekly code-review office hours signals strong written/verbal communication and a collaborative mindset that fits an async-first team. Speaking at JSConf TH 2024 indicates she can articulate technical ideas clearly to a public audience. Her resume itself is concise, well-structured, and quantified — a positive proxy for written English quality expected in remote async work.",
+  "strengths": [
+    "Production Next.js 14 + tRPC experience at scale (80k DAU) — directly mirrors the JD's core stack",
+    "PostgreSQL schema design for complex domains (orders & billing) with Prisma migrations",
+    "Early OpenAI API integration (2022) satisfies the LLM/AI nice-to-have",
+    "Open-source Prisma plugins with ~600 stars — concrete, verifiable side-project evidence",
+    "Demonstrated mentorship and code-review culture — reduces onboarding overhead for the team"
+  ],
+  "concerns": [
+    "MongoDB was used at the Startup but no mention of advanced relational query optimization or large-scale PostgreSQL tuning — worth probing depth beyond schema design",
+    "tRPC is not explicitly listed in the JD; confirm she can work with REST or GraphQL patterns if the team's backend differs",
+    "No explicit mention of unit/integration testing frameworks (Jest, Vitest, Playwright) despite the JD emphasizing solid testing habits",
+    "Current role is at a single company for 3 years — verify she is comfortable with the pace and ambiguity of a potentially smaller or faster-moving team"
+  ],
+  "prescreenQuestions": [
+    {
+      "topic": "Testing habits",
+      "question": "Can you walk me through the testing strategy you used during the Next.js migration at TechCorp — what frameworks did you use, what coverage targets did you set, and how did you enforce them in code review?",
+      "why": "The JD explicitly requires solid testing habits, but the resume has no mention of testing tools or coverage practices, making this a gap that must be validated."
+    },
+    {
+      "topic": "Schema design depth",
+      "question": "You designed the PostgreSQL schemas for orders and billing at TechCorp. Can you describe a specific schema decision that was non-obvious — for example, how you handled soft deletes, multi-currency, or high-write concurrency?",
+      "why": "Relational schema design is a must-have; this probes whether her ownership was architectural or primarily implementation-level."
+    },
+    {
+      "topic": "LLM/AI integration",
+      "question": "You integrated OpenAI in 2022 for an in-app drafting assistant. What does that integration look like today — have you revisited prompt engineering, streaming responses, or cost/latency trade-offs as the APIs have evolved?",
+      "why": "The LLM nice-to-have is increasingly important; understanding whether her knowledge is current or dated from an early prototype matters."
+    },
+    {
+      "topic": "Async remote collaboration",
+      "question": "In an async-first environment, how do you typically communicate a complex technical decision — for example, a schema change that affects multiple teams — without relying on a synchronous meeting?",
+      "why": "The JD calls out good written English and async-first culture; this surfaces her actual communication workflow rather than just resume signals."
+    },
+    {
+      "topic": "Open-source ownership",
+      "question": "Tell me about one of your Prisma plugins — what problem does it solve, how did you decide to open-source it, and how do you manage issues and PRs from external contributors?",
+      "why": "Open-source contributions are a nice-to-have, and her plugins have real traction (~600 stars); this validates depth and community engagement."
+    },
+    {
+      "topic": "Scope & ambiguity",
+      "question": "At TechCorp you led a monolith-to-Next.js migration. How did you scope and sequence the work, and what would you do differently if you were starting that migration today?",
+      "why": "End-to-end feature ownership is central to this role; understanding her planning and retrospective thinking reveals seniority and growth mindset."
+    }
+  ],
+  "summary": "Jane Doe is a Bangkok-based Senior Full Stack Engineer whose 5-year track record maps almost perfectly onto the JD: she has shipped Next.js 14 + TypeScript + PostgreSQL at 80k DAU scale, integrated OpenAI APIs, deployed on AWS and Vercel, and maintains open-source tooling with measurable community adoption. The primary gaps to probe are testing practices (no frameworks mentioned on the resume) and the depth of her relational database expertise beyond schema design. The interview should focus on testing strategy, schema/query optimization, and async communication style to confirm she can operate independently in a remote-first environment. Strong recommend to advance to a technical screen."
+}

@@ -1,0 +1,30 @@
+{
+  "headline": "6-Candidate Pipeline: No Hires, No AI Scores",
+  "summary": "The pipeline contains only 6 total candidates (5 active, 1 rejected), which is too small to draw statistically reliable conclusions — confidence is low. Candidates are evenly distributed across 5 stages (1 each in Applied, Screening, Pre-screen Call, First Interview, and Offer), with 0 hires to date and a 0% hire rate. All 6 candidates are unscored, eliminating AI-assisted prioritization entirely. Average time in stage is 0.85 days, suggesting the pipeline is very recent or movement tracking is incomplete.",
+  "insights": [
+    "All 6 candidates (100%) are unscored — no AI scores exist, making objective candidate comparison impossible at every stage.",
+    "1 candidate has reached Offer stage but 0 have been hired, representing a potential close-rate risk at the final conversion step.",
+    "The single rejection (1 of 6, ~17%) occurred somewhere in the funnel, but stage-level drop-off cannot be assessed meaningfully with only 1 candidate per stage.",
+    "Sources are perfectly split: LinkedIn (2), JobsDB (2), and Referral (2) — no source differentiation is possible yet; effectiveness data requires more volume.",
+    "Avg time in stage of 0.85 days across 5 active candidates suggests either very recent pipeline creation or that stage timestamps are not being consistently recorded."
+  ],
+  "recommendations": [
+    {
+      "action": "Trigger AI scoring for all 6 unscored candidates immediately.",
+      "rationale": "100% unscored pipeline removes objective ranking; scoring enables prioritization before the Offer-stage candidate advances further."
+    },
+    {
+      "action": "Confirm and close the 1 Offer-stage candidate this week.",
+      "rationale": "With 0 hires and 1 candidate at Offer, this is the single highest-leverage action to move hire rate above 0%."
+    },
+    {
+      "action": "Verify stage timestamp logging is functioning correctly.",
+      "rationale": "Avg time of 0.85 days across all stages is implausibly low and may indicate tracking gaps distorting future cycle-time analysis."
+    },
+    {
+      "action": "Add at least 10 more candidates before drawing source-effectiveness conclusions.",
+      "rationale": "2 candidates per source is insufficient to evaluate LinkedIn vs. JobsDB vs. Referral ROI with any confidence."
+    }
+  ],
+  "confidence": "low"
+}

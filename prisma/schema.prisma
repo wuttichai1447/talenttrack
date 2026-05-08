@@ -1,0 +1,120 @@
+// TalentTrack — Mini Recruiting Pipeline Tool
+// Prisma data model
+//
+// Design notes:
+// - Single SQLite file for local dev (zero-config). Swap `provider` to "postgresql"
+//   for production (Neon/Supabase) without code changes.
+// - Stages are stored as a string enum to keep SQLite-portable while still validated
+//   in TypeScript via `src/lib/stages.ts`.
+// - Resume scoring is a 1:N from Candidate so HR can re-screen against new JDs.
+// - Interviews track lifecycle status (SCHEDULED, COMPLETED, CANCELLED) and reference
+//   the candidate so cancelling auto-syncs the candidate's stage history.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Job {
+  id           String      @id @default(cuid())
+  title        String
+  department   String?
+  location     String?
+  description  String
+  requirements String
+  niceToHave   String?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  candidates Candidate[]
+}
+
+model Candidate {
+  id         String   @id @default(cuid())
+  name       String
+  email      String
+  phone      String?
+  source     String   // LinkedIn | JobsDB | Referral | Other
+  appliedAt  DateTime @default(now())
+  stage      String   @default("APPLIED") // see src/lib/stages.ts
+  notes      String?
+  resumeText String?  // Plain text of CV (extracted from PDF or pasted)
+  resumeFile String?  // Original PDF filename, if uploaded
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  jobId      String
+  job        Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  screenings ResumeScreening[]
+  interviews Interview[]
+  events     StageEvent[]
+
+  @@index([jobId])
+  @@index([stage])
+}
+
+model ResumeScreening {
+  id              String   @id @default(cuid())
+  candidateId     String
+  candidate       Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+
+  // 0-10 scores
+  skillsScore     Float
+  experienceScore Float
+  cultureScore    Float
+  overallScore    Float    // weighted average computed server-side
+
+  // Structured AI output (stored as JSON strings for SQLite compatibility)
+  skillsReasoning     String
+  experienceReasoning String
+  cultureReasoning    String
+
+  strengths       String   // JSON array of strings
+  concerns        String   // JSON array of strings
+  prescreenQuestions String // JSON array of {topic, question, why}
+  summary         String   // Short paragraph for the interview team
+
+  modelUsed       String   @default("claude-sonnet-4-6")
+  createdAt       DateTime @default(now())
+
+  @@index([candidateId])
+}
+
+model Interview {
+  id           String   @id @default(cuid())
+  candidateId  String
+  candidate    Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+
+  scheduledAt  DateTime
+  durationMin  Int      @default(30)
+  type         String   @default("PRESCREEN") // PRESCREEN | FIRST_INTERVIEW | FINAL
+  meetLink     String   // Generated Google Meet–style link
+  description  String?  // Custom note + AI-suggested questions
+  status       String   @default("SCHEDULED") // SCHEDULED | COMPLETED | CANCELLED | RESCHEDULED
+  interviewers String?  // Comma-separated names
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([candidateId])
+  @@index([scheduledAt])
+}
+
+// Stage history for audit/timeline + dashboard time-in-stage analytics
+model StageEvent {
+  id          String   @id @default(cuid())
+  candidateId String
+  candidate   Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+
+  fromStage   String?
+  toStage     String
+  note        String?
+  createdAt   DateTime @default(now())
+
+  @@index([candidateId])
+}
