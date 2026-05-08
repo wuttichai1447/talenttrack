@@ -102,18 +102,20 @@ Open http://localhost:3000.
 
 ### Database
 
-Default = SQLite (`prisma/dev.db`). To switch to Postgres:
+The schema targets **PostgreSQL** (so it works on Vercel's serverless filesystem, where SQLite writes won't persist). For local dev you have two options:
 
-```diff
-# prisma/schema.prisma
-  datasource db {
--   provider = "sqlite"
-+   provider = "postgresql"
-    url      = env("DATABASE_URL")
-  }
+**Option 1 — Neon free tier (recommended).** Sign up at [neon.tech](https://neon.tech), create a project, copy the connection string into `.env` as `DATABASE_URL`, then run `pnpm db:push && pnpm db:seed`.
+
+**Option 2 — Local Postgres via Docker.**
+
+```bash
+docker run -d --name talenttrack-pg -e POSTGRES_PASSWORD=dev -p 5432:5432 postgres:16
+# then in .env:
+DATABASE_URL="postgresql://postgres:dev@localhost:5432/postgres"
+pnpm db:push && pnpm db:seed
 ```
 
-Then update `DATABASE_URL` in `.env` and run `pnpm db:push`.
+> The earlier commits used SQLite for zero-config local dev; flipping to `provider = "sqlite"` and pointing `DATABASE_URL="file:./dev.db"` still works for offline demos.
 
 ---
 
@@ -215,13 +217,19 @@ See [COWORK_LOG.md](./COWORK_LOG.md) for the prompt iteration journey on the AI 
 
 ## 🌐 Deployment
 
-The app is Vercel-ready. Steps:
+The app is Vercel-ready out of the box.
 
-1. Push to GitHub.
-2. Import on Vercel.
-3. Set env vars: `DATABASE_URL` (use a hosted Postgres like Neon), `ANTHROPIC_API_KEY`.
-4. Update `prisma/schema.prisma` `provider` → `postgresql`.
-5. Vercel runs `prisma generate && next build` automatically (it's wired into the `build` script).
+1. **Import** the repo at [vercel.com/new](https://vercel.com/new) (Continue with GitHub → pick `talenttrack`).
+2. **Add a database** — Vercel dashboard → *Storage* → *Add Storage* → *Neon Postgres* (one click; `DATABASE_URL` is auto-injected).
+3. **Add `ANTHROPIC_API_KEY`** under *Settings → Environment Variables* (production + preview).
+4. **Deploy** — Vercel runs `prisma generate && prisma db push && next build` (wired into the `build` script), so the database schema is created on the first deploy automatically.
+5. *(Optional)* **Seed sample data** — once deployed, run from your machine:
+   ```bash
+   DATABASE_URL="<your-neon-url>" pnpm db:seed
+   ```
+   Or skip — the empty-state UI handles the no-data case gracefully on every page.
+
+The free tier (Vercel Hobby + Neon free) is sufficient to demo all four modules end-to-end with the live Claude API.
 
 ---
 
